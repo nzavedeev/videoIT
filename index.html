@@ -13,11 +13,11 @@
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
             k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107253538', 'ym');
-    
-        ym(107253538, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107258137', 'ym');
+
+        ym(107258137, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
     </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/107253538" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <noscript><div><img src="https://mc.yandex.ru/watch/107258137" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
     
     <style>
@@ -211,8 +211,7 @@
         }
 
         .form-input {
-            flex: 1;
-            min-width: 150px;
+            flex: 1 1 200px;
             padding: 0.9rem 1rem;
             background-color: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -247,6 +246,8 @@
             color: #ffffff;
             letter-spacing: 0.2rem;
             text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+            min-width: 100px;
+            text-align: center;
         }
 
         .captcha-input {
@@ -374,20 +375,28 @@
                     
                     <div class="success-message" id="successMessage">Спасибо! Я свяжусь с вами в ближайшее время.</div>
 
-                    <form id="feedbackForm" action="https://formspree.io/f/mzdjenlr" method="POST">
+                    <form id="feedbackForm" action="https://formspree.io/f/xbdzojjy" method="POST">
+                        <!-- Поля для Formspree (обязательные) -->
+                        <input type="text" name="_gotcha" style="display:none">
+                        <input type="hidden" name="_subject" value="Новая заявка с сайта видеонаблюдения">
+                        
                         <div class="form-row">
                             <input type="text" class="form-input" id="name" name="name" placeholder="Имя *" required>
                             <input type="tel" class="form-input" id="phone" name="phone" placeholder="Телефон *" required>
                             <input type="email" class="form-input" id="email" name="email" placeholder="Email *" required>
                         </div>
                         
+                        <!-- Сообщение (необязательно) -->
+                        <div class="form-row">
+                            <textarea class="form-input" name="message" placeholder="Ваше сообщение (необязательно)" rows="2"></textarea>
+                        </div>
+                        
                         <div class="captcha-row">
                             <span class="captcha-code" id="captchaDisplay"></span>
-                            <input type="text" class="captcha-input" id="captchaInput" placeholder="Код" required>
+                            <input type="text" class="captcha-input" id="captchaInput" placeholder="Введите код" required>
                             <button type="button" class="captcha-refresh" onclick="generateCaptcha()">↻</button>
                         </div>
                         <input type="hidden" id="captchaCode" name="captchaCode">
-                        <input type="hidden" name="captcha" id="hiddenCaptcha">
 
                         <button type="submit" class="submit-btn">Отправить</button>
                     </form>
@@ -415,25 +424,40 @@
             const phone = document.getElementById('phone').value.trim();
             const email = document.getElementById('email').value.trim();
 
+            // Валидация полей
             if (!name || !phone || !email) {
                 e.preventDefault();
                 alert('Заполните имя, телефон и email');
                 return false;
             }
 
+            // Валидация email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Введите корректный email');
+                return false;
+            }
+
+            // Проверка капчи
             if (userCaptcha !== correctCaptcha) {
                 e.preventDefault();
-                alert('Неверный код');
+                alert('Неверный код подтверждения');
                 generateCaptcha();
                 return false;
             }
 
-            document.getElementById('hiddenCaptcha').value = correctCaptcha;
-            
+            // Показываем сообщение об успехе (для Formspree это сработает перед редиректом)
             document.getElementById('successMessage').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('successMessage').style.display = 'none';
-            }, 4000);
+            
+            // Formspree перенаправит на страницу благодарности по умолчанию
+            // Чтобы остаться на странице, можно раскомментировать следующие строки:
+            // e.preventDefault();
+            // setTimeout(() => {
+            //     document.getElementById('successMessage').style.display = 'none';
+            //     document.getElementById('feedbackForm').reset();
+            //     generateCaptcha();
+            // }, 4000);
             
             return true;
         });
@@ -441,6 +465,7 @@
         window.onload = function() {
             generateCaptcha();
 
+            // Форматирование телефона
             const phoneInput = document.getElementById('phone');
             if (phoneInput) {
                 phoneInput.addEventListener('input', function(e) {
